@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Siren Audio Mixer</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo"><i></i></div>
+      <h1>siren<span>·</span>audio<span>·</span>mixer</h1>
+      <div class="count" id="count">0 tabs</div>
+    </header>
+
+    <main id="main">
+      <p id="error" hidden></p>
+      <div class="list" id="tabs"></div>
+      <p class="note">Tabs playing audio are added automatically</p>
+    </main>
+
+    <section id="about" class="about" hidden>
+      <h2>About</h2>
+      <p>
+        Siren Audio Mixer lets you set the volume and a sound preset for each tab separately. Run two calls, or a call
+        and music, without them drowning each other out.
+      </p>
+      <p>
+        Click the icon on a tab that's playing audio to control it. Presets make voices sound different (Clear,
+        Background, Muffled, Radio), so two at once are easier to follow.
+      </p>
+
+      <h2>Privacy policy</h2>
+      <ul>
+        <li>Tab audio is processed on your device only. It is never recorded, saved or sent anywhere.</li>
+        <li>No personal data, browsing history or analytics are collected.</li>
+        <li>No network requests are made, and no servers or third parties are involved.</li>
+        <li>Volume and preset settings are kept in memory only and are cleared when the tab or Chrome closes.</li>
+        <li>
+          Permissions: <b>tabCapture</b> and <b>activeTab</b> to read the audio of the tab you choose,
+          <b>offscreen</b> to keep playing it after the popup closes, and <b>tabs</b> to list which tabs are
+          playing audio, with their title and icon.
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      © 2026 Rainoutside · <button class="link" id="aboutBtn">About</button>
+    </footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

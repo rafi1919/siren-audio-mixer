@@ -1,0 +1,17 @@
+{
+  "name": "rain-siren",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "check": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "typescript": "~5.9",
+    "wxt": "^0.21.4"
+  }
+}

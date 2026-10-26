@@ -47,6 +47,22 @@ See [problem.md](problem.md) for the full spec.
 
 Scroll over a slider to nudge the volume, and click the closed lock to hand a tab back when you want normal fullscreen.
 
+## Requirements
+
+| | |
+|---|---|
+| **Chrome** | 116 or newer (August 2023) |
+| **Edge** | 116 or newer. Same build, loaded from `edge://extensions` |
+| **Brave, Opera, Vivaldi** | Chromium 116 or newer. Opera may need its "Install Chrome Extensions" helper |
+| **Desktop** | Windows, macOS, Linux, ChromeOS |
+| **Not supported** | Firefox, Safari, Android, iOS |
+
+Only Chrome is tested. Edge is listed because Microsoft documents both extension APIs this uses as supported; the Chromium browsers below it share the same engine but haven't been tried.
+
+Nothing else is needed: no account, no network, and the audio effects are light enough for any machine that runs the browser.
+
+**Why 116?** Two things the extension can't work without land in that version: `runtime.getContexts()`, and the ability for an offscreen document to use a `tabCapture` stream. Both are browser internals rather than anything shipped in the bundle, so an older Chrome can't be worked around — before 116, a Manifest V3 extension could not keep capturing tab audio once the popup closed. Mobile is out for a simpler reason: Chrome has no extensions on Android or iOS at all.
+
 ## What it can't do
 
 - **It can't take over a tab you haven't clicked the icon on.** This is a Chrome rule. Other tabs playing audio still show up and can be muted, but their volume and preset stay locked until you open that tab and click the icon.
@@ -58,7 +74,7 @@ Scroll over a slider to nudge the volume, and click the closed lock to hand a ta
 - **Custom EQ sliders:** you get five fixed presets, and nothing else.
 - **Noise removal or separating voices:** it only uses Chrome's built-in audio effects.
 - **Remembering settings:** volume and presets stay with a tab for the whole session, through navigation and through releasing and re-taking it, but reset when the tab closes or Chrome restarts. Nothing is written to disk.
-- **Other browsers:** it needs Chrome 116 or newer (or another Chromium browser such as Edge or Brave). Firefox and Safari aren't supported.
+- **Firefox and Safari:** not supported, and not a small fix. Neither implements `tabCapture` or `offscreen`, so it would be a rewrite rather than a port. See [Requirements](#requirements).
 
 ## Tech stack
 

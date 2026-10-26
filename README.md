@@ -104,6 +104,10 @@ npm run zip      # outputs .output/rain-siren-<version>-chrome.zip
 
 Audio is processed on your device only. It is never recorded, stored or sent anywhere. No data is collected, there are no analytics and no network requests. Settings live in memory only. The full policy is on the About page in the popup.
 
-## Copyright
+## License
 
-© 2026 Rainoutside
+[GPL-3.0-only](LICENSE) © 2026 Rainoutside
+
+Use it, fork it, change it, sell it. A fork you distribute has to ship its source under the GPL too.
+
+The name "Siren Audio Mixer" and the logo are not covered by this license.

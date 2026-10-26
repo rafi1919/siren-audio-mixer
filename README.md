@@ -43,6 +43,7 @@ See [problem.md](problem.md) for the full spec.
 ## What it can't do
 
 - **It can't take over a tab you haven't clicked the icon on.** This is a Chrome rule. Other tabs playing audio still show up and can be muted, but their volume and preset stay locked until you open that tab and click the icon.
+- **It can't share a tab with another audio extension.** Chrome lets only one extension capture a tab at a time. If another extension (Volume Master, a volume booster, a tab recorder) already has a tab, you'll see "Cannot capture a tab with an active stream." Turn that extension off for the tab, or reload the tab, then try again. Using the two extensions on different tabs works fine.
 - **Fullscreen stays inside the tab while a tab is controlled.** Chrome confines fullscreen for any tab it is capturing — every site, not only YouTube. Siren Audio Mixer releases a tab as soon as it goes fullscreen, so fullscreen behaves normally. That release is temporary: tabs default to locked, so the next time you open the popup on that tab it is taken back with the same volume and preset. Releasing by hand with the lock button is permanent until you click the lock again. You can also release a tab yourself with its lock button, and take it back the same way. F11 window fullscreen is unaffected.
 - **Desktop apps:** it doesn't work on Discord desktop, Spotify or other apps outside Chrome. Use the Windows Volume Mixer for those.
 - **Microphone:** it only changes what you hear, never your mic.

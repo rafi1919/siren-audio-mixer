@@ -68,7 +68,6 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
   const card = el('div', { className: 'row' });
   if (!seen.has(tabId)) card.classList.add('new');
   seen.add(tabId);
-  if (!tab.audible) card.classList.add('silent');
 
   const fav = el('div', { className: 'fav', textContent: (tab.title ?? '?')[0] });
   if (tab.favIconUrl) {
@@ -194,7 +193,9 @@ async function render() {
   const [active] = await browser.tabs.query({ active: true, currentWindow: true });
   const states = (await hasOffscreen()) ? await send<TabState[]>({ type: 'list' }) : [];
   const attached = new Map(states.map((s) => [s.tabId, s]));
-  const tabs = (await browser.tabs.query({})).filter((t) => t.id !== undefined && (attached.has(t.id) || t.audible));
+  // Only tabs playing audio, in tab-strip order. A captured tab that went quiet keeps its capture
+  // and its settings, so whatever it plays next is already turned down; it just has no row.
+  const tabs = (await browser.tabs.query({})).filter((t) => t.id !== undefined && t.audible);
 
   list.replaceChildren(...(tabs.length ? tabs.map((t) => row(t, attached.get(t.id!), t.id === active?.id)) : [empty()]));
   count.textContent = `${tabs.length} ${tabs.length === 1 ? 'tab' : 'tabs'}`;
@@ -211,7 +212,8 @@ async function init() {
 }
 
 browser.tabs.onUpdated.addListener((_id, change) => {
-  if ('audible' in change || 'mutedInfo' in change || 'title' in change || 'favIconUrl' in change) render().catch(showError);
+  if ('audible' in change || 'mutedInfo' in change || 'title' in change || 'favIconUrl' in change || 'url' in change)
+    render().catch(showError);
 });
 browser.tabs.onRemoved.addListener(() => render().catch(showError));
 

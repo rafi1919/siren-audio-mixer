@@ -30,7 +30,8 @@ See [problem.md](problem.md) for the full spec.
 
 - **Mute per tab.** Unmuting goes back to your previous volume.
 - **Lock per tab.** A controlled tab shows a closed lock. Click it to release the tab: audio goes back to the tab and the lock opens. Your volume and preset are remembered, so clicking the open lock takes the tab back with the same settings. A released tab is never re-taken on its own.
-- **Tabs add themselves.** Any tab playing audio shows up in the popup. Opening the popup on a tab that's playing audio takes control of it straight away, with no extra button.
+- **Tabs add themselves.** The popup lists the tabs that are playing audio right now, in tab order. Opening the popup on a tab that's playing takes control of it straight away, with no extra button. A tab that goes quiet drops off the list and comes back when it plays again.
+- **Settings stay with the tab.** Volume and preset belong to the tab, not to the site. Turn YouTube down, then open a different music site in that same tab, and it starts at the same volume and preset without touching the popup.
 - **Keeps running with the popup closed.** A tab stays controlled until you close it.
 
 ## Usage
@@ -48,7 +49,7 @@ See [problem.md](problem.md) for the full spec.
 - **Volume above 100%:** not available.
 - **Custom EQ sliders:** you get five fixed presets, and nothing else.
 - **Noise removal or separating voices:** it only uses Chrome's built-in audio effects.
-- **Remembering settings:** volume and presets reset when Chrome restarts or the tab closes.
+- **Remembering settings:** volume and presets stay with a tab for the whole session, through navigation and through releasing and re-taking it, but reset when the tab closes or Chrome restarts. Nothing is written to disk.
 - **Other browsers:** it needs Chrome 116 or newer (or another Chromium browser such as Edge or Brave). Firefox and Safari aren't supported.
 
 ## Tech stack

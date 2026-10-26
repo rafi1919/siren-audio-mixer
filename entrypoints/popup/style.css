@@ -139,7 +139,9 @@ h1 span {
 }
 .title b {
   display: block;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -147,6 +149,11 @@ h1 span {
 .title small {
   color: var(--mute);
   font-size: 11px;
+}
+.title small.host {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .title small em {
   color: var(--accent);

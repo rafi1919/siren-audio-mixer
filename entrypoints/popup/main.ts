@@ -77,7 +77,7 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
   }
 
   const title = el('div', { className: 'title', title: tab.title ?? '' });
-  const sub = el('small');
+  const sub = el('small', locked ? { className: 'host' } : {});
   if (isActive) sub.append(el('em', { textContent: 'This tab · ' }));
   sub.append(
     locked

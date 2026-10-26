@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/icon/128.png" width="88" alt="Siren Audio Mixer logo">
+</p>
+
 # Siren Audio Mixer
 
 A Chrome extension that sets the volume and a sound preset separately for each tab, so two audio sources don't drown each other out.
@@ -29,6 +33,7 @@ See [problem.md](problem.md) for the full spec.
   | Radio | Thin, phone-like voice | Making one voice clearly different from the other |
 
 - **Mute per tab.** Unmuting goes back to your previous volume.
+- **Scroll to adjust.** The mouse wheel over a slider moves the volume in 5% steps, and unmutes the tab if it was muted.
 - **Lock per tab.** A controlled tab shows a closed lock. Click it to release the tab: audio goes back to the tab and the lock opens. Your volume and preset are remembered, so clicking the open lock takes the tab back with the same settings. A released tab is never re-taken on its own.
 - **Tabs add themselves.** The popup lists the tabs that are playing audio right now, in tab order. Opening the popup on a tab that's playing takes control of it straight away, with no extra button. A tab that goes quiet drops off the list and comes back when it plays again.
 - **Settings stay with the tab.** Volume and preset belong to the tab, not to the site. Turn YouTube down, then open a different music site in that same tab, and it starts at the same volume and preset without touching the popup.
@@ -37,8 +42,10 @@ See [problem.md](problem.md) for the full spec.
 ## Usage
 
 1. Play audio in a tab.
-2. Click the Siren Audio Mixer icon on that tab. You can now use its slider and preset.
+2. Click the Siren Audio Mixer icon on that tab. It takes the tab straight away: the lock shows closed, and the slider and preset are live.
 3. Do the same on any other tab you want to control. After that, you can change all of them from the popup on any tab.
+
+Scroll over a slider to nudge the volume, and click the closed lock to hand a tab back when you want normal fullscreen.
 
 ## What it can't do
 

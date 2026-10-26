@@ -86,7 +86,7 @@ rain-siren/
 ```
 
 Rules:
-- No background service worker: the popup gets the stream id and creates the offscreen doc itself. Add one only if something must run with the popup closed.
+- Background service worker holds only the fullscreen watch: `chrome.tabCapture` is undefined in offscreen documents, and Chrome confines fullscreen inside a captured tab, so the worker releases a tab that goes fullscreen. Everything else stays out of it — the popup gets the stream id and creates the offscreen doc itself.
 - Audio graph + per-tab settings live in the offscreen document (survives popup closing).
 - Popup never touches audio — sends `attach` / `detach` / `set` / `list` messages only.
 - Chrome only lets `tabCapture` grab a tab where the extension icon was clicked. So: open popup on a tab → "Control this tab" once; after that it's controllable from any tab. Other audible tabs get a "Go to tab" button.

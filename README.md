@@ -42,6 +42,7 @@ See [problem.md](problem.md) for the full spec.
 ## What it can't do
 
 - **It can't take over a tab you haven't clicked the icon on.** This is a Chrome rule. Other tabs playing audio still show up and can be muted, but their volume and preset stay locked until you open that tab and click the icon.
+- **Fullscreen stays inside the tab while a tab is controlled.** Chrome confines fullscreen for any tab it is capturing — every site, not only YouTube. Siren Audio Mixer releases a tab as soon as it goes fullscreen, so fullscreen behaves normally. That release is temporary: tabs default to locked, so the next time you open the popup on that tab it is taken back with the same volume and preset. Releasing by hand with the lock button is permanent until you click the lock again. You can also release a tab yourself with its lock button, and take it back the same way. F11 window fullscreen is unaffected.
 - **Desktop apps:** it doesn't work on Discord desktop, Spotify or other apps outside Chrome. Use the Windows Volume Mixer for those.
 - **Microphone:** it only changes what you hear, never your mic.
 - **Volume above 100%:** not available.
@@ -68,6 +69,7 @@ Capturing a tab grabs all of its audio output and silences the original. Siren A
 |---|---|
 | `entrypoints/popup/` | UI: the tab list, sliders and presets. Sends messages only and never touches audio. |
 | `entrypoints/offscreen/` | One AudioContext, with a capture → preset → gain chain per tab |
+| `entrypoints/background.ts` | Service worker: watches `tabCapture.onStatusChanged` and releases a tab that goes fullscreen |
 | `lib/presets.ts` | The node chain for each preset. Tune the numbers here by ear. |
 | `lib/messages.ts` | Message types shared by the popup and the offscreen document |
 

@@ -6,11 +6,13 @@ export interface TabState {
   volume: number; // 0..1
   preset: Preset;
   muted: boolean;
+  locked: boolean; 
 }
 
 // popup → offscreen
 export type Message =
   | { type: 'attach'; tabId: number; streamId: string }
+  | { type: 'detach'; tabId: number; auto?: boolean }
   | { type: 'set'; tabId: number; volume?: number; preset?: Preset; muted?: boolean }
   | { type: 'list' };
 

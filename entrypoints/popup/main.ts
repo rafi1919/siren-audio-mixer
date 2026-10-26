@@ -43,6 +43,10 @@ async function attach(tabId: number) {
 const MUTE_ICONS =
   '<svg class="w" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>' +
   '<svg class="x" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
+const LOCK_ICON =
+  '<svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>';
+const UNLOCK_ICON =
+  '<svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 7.5-1.3"/></svg>';
 
 const label = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
 
@@ -60,6 +64,7 @@ type Tab = Browser.tabs.Tab;
 
 function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
   const tabId = tab.id!;
+  const locked = !!state?.locked; // locked = we hold the capture; released keeps its settings for next time
   const card = el('div', { className: 'row' });
   if (!seen.has(tabId)) card.classList.add('new');
   seen.add(tabId);
@@ -74,21 +79,41 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
   const title = el('div', { className: 'title', title: tab.title ?? '' });
   const sub = el('small');
   if (isActive) sub.append(el('em', { textContent: 'This tab · ' }));
-  sub.append(state ? host(tab.url) : 'Click to open, then click Siren Audio Mixer for volume/effects');
+  sub.append(
+    locked
+      ? host(tab.url)
+      : state
+        ? isActive
+          ? 'Released · click the lock to take it back'
+          : 'Released · open this tab to take it back'
+        : 'Click to open, then click Siren Audio Mixer for volume/effects',
+  );
   title.append(el('b', { textContent: tab.title ?? tab.url ?? 'Untitled' }), sub);
 
   const eq = el('div', { className: 'eq' });
   eq.append(el('u'), el('u'), el('u'));
 
-  const preset = el('select', { ariaLabel: 'Sound preset', disabled: !state });
+  const preset = el('select', { ariaLabel: 'Sound preset', disabled: !locked });
   for (const p of PRESETS) preset.append(el('option', { value: p, textContent: label(p), selected: p === state?.preset }));
 
   const mute = el('button', { className: 'mbtn', ariaLabel: 'Mute', innerHTML: MUTE_ICONS });
-  const slider = el('input', { type: 'range', min: '0', max: '100', ariaLabel: 'Volume', disabled: !state });
+  // Chrome keeps fullscreen inside a captured tab, so unlocking is the only way back to normal fullscreen.
+  const lock = el('button', {
+    className: locked ? 'mbtn lbtn' : 'mbtn lbtn open',
+    ariaLabel: locked ? 'Release tab' : 'Take control of tab',
+    title: locked
+      ? 'Locked: this tab plays through Siren Audio Mixer. Click to release it, fullscreen works again.'
+      : isActive
+        ? 'Unlocked: click to take control of this tab'
+        : 'Unlocked: open this tab, then click the lock to take control',
+    innerHTML: locked ? LOCK_ICON : UNLOCK_ICON,
+    disabled: !locked && !isActive, // Chrome only captures the tab whose icon was clicked
+  });
+  const slider = el('input', { type: 'range', min: '0', max: '100', ariaLabel: 'Volume', disabled: !locked });
   const pct = el('span', { className: 'pct' });
 
   let volume = Math.round((state?.volume ?? 1) * 100);
-  let muted = state ? state.muted : !!tab.mutedInfo?.muted;
+  let muted = locked ? state!.muted : !!tab.mutedInfo?.muted;
   const paint = () => {
     slider.value = String(volume);
     slider.style.setProperty('--v', `${volume}%`);
@@ -110,6 +135,10 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
       send({ type: 'set', tabId, muted });
       paint();
     });
+    lock.addEventListener('click', async () => {
+      await send({ type: 'detach', tabId });
+      await render();
+    });
   } else {
     // Chrome only allows capturing a tab where the extension icon was clicked: native mute here, full control there.
     mute.addEventListener('click', (e) => {
@@ -118,16 +147,23 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
       browser.tabs.update(tabId, { muted });
       paint();
     });
-    card.classList.add('remote');
-    card.addEventListener('click', async () => {
-      await browser.tabs.update(tabId, { active: true });
-      await browser.windows.update(tab.windowId, { focused: true });
-      window.close();
+    lock.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await attach(tabId).catch(showError);
+      await render();
     });
+    if (!isActive) {
+      card.classList.add('remote');
+      card.addEventListener('click', async () => {
+        await browser.tabs.update(tabId, { active: true });
+        await browser.windows.update(tab.windowId, { focused: true });
+        window.close();
+      });
+    }
   }
 
   const ctrl1 = el('div', { className: 'ctrl' });
-  ctrl1.append(preset);
+  ctrl1.append(preset, lock);
   const ctrl2 = el('div', { className: 'ctrl' });
   ctrl2.append(mute, slider, pct);
   card.append(fav, title, eq, ctrl1, ctrl2);

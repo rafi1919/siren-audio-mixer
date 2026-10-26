@@ -29,6 +29,7 @@ See [problem.md](problem.md) for the full spec.
   | Radio | Thin, phone-like voice | Making one voice clearly different from the other |
 
 - **Mute per tab.** Unmuting goes back to your previous volume.
+- **Lock per tab.** A controlled tab shows a closed lock. Click it to release the tab: audio goes back to the tab and the lock opens. Your volume and preset are remembered, so clicking the open lock takes the tab back with the same settings. A released tab is never re-taken on its own.
 - **Tabs add themselves.** Any tab playing audio shows up in the popup. Opening the popup on a tab that's playing audio takes control of it straight away, with no extra button.
 - **Keeps running with the popup closed.** A tab stays controlled until you close it.
 

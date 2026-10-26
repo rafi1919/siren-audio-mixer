@@ -237,6 +237,17 @@ input:disabled {
   stroke-linejoin: round;
 }
 .mbtn .x { display: none; }
+.lbtn {
+  color: var(--accent);
+}
+.lbtn.open {
+  color: var(--mute);
+}
+.lbtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
 .row.muted .mbtn {
   background: var(--accent);
   color: var(--bg);

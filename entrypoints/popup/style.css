@@ -205,6 +205,9 @@ select {
   font-size: 12px;
   cursor: pointer;
 }
+option {
+  cursor: pointer;
+}
 select:focus-visible,
 button:focus-visible,
 input:focus-visible {

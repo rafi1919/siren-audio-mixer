@@ -122,13 +122,23 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
   };
   paint();
 
-  if (state) {
-    slider.addEventListener('input', () => {
-      volume = Number(slider.value);
-      muted = false; // dragging the slider unmutes
+  if (locked) {
+    const setVolume = (v: number) => {
+      volume = Math.min(100, Math.max(0, v));
+      muted = false; // touching the volume unmutes
       send({ type: 'set', tabId, volume: volume / 100, muted });
       paint();
-    });
+    };
+    slider.addEventListener('input', () => setVolume(Number(slider.value)));
+    // passive: false or preventDefault is ignored and the popup scrolls instead
+    slider.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        setVolume(volume + (e.deltaY < 0 ? 5 : -5));
+      },
+      { passive: false },
+    );
     preset.addEventListener('change', () => send({ type: 'set', tabId, preset: preset.value as TabState['preset'] }));
     mute.addEventListener('click', () => {
       muted = !muted;

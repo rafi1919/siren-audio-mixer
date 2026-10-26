@@ -181,8 +181,10 @@ function row(tab: Tab, state: TabState | undefined, isActive: boolean) {
 
 function empty() {
   const box = el('div', { className: 'empty' });
+  const moon = el('div', { className: 'moon' });
+  moon.append(el('i'));
   box.append(
-    el('div', { className: 'orb' }),
+    moon,
     el('b', { textContent: 'Quiet on the water' }),
     el('small', { textContent: 'No tabs are playing audio. Play something and it will appear here.' }),
   );

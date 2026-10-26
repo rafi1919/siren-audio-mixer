@@ -148,9 +148,7 @@ async function render() {
   const [active] = await browser.tabs.query({ active: true, currentWindow: true });
   const states = (await hasOffscreen()) ? await send<TabState[]>({ type: 'list' }) : [];
   const attached = new Map(states.map((s) => [s.tabId, s]));
-  const tabs = (await browser.tabs.query({}))
-    .filter((t) => t.id !== undefined && (attached.has(t.id) || t.audible))
-    .sort((a, b) => Number(b.id === active?.id) - Number(a.id === active?.id));
+  const tabs = (await browser.tabs.query({})).filter((t) => t.id !== undefined && (attached.has(t.id) || t.audible));
 
   list.replaceChildren(...(tabs.length ? tabs.map((t) => row(t, attached.get(t.id!), t.id === active?.id)) : [empty()]));
   count.textContent = `${tabs.length} ${tabs.length === 1 ? 'tab' : 'tabs'}`;

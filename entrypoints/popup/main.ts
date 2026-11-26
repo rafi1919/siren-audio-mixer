@@ -5,7 +5,10 @@ const list = document.getElementById('tabs')!;
 const count = document.getElementById('count')!;
 const errorEl = document.getElementById('error')!;
 
-const send = <T = void>(msg: Message) => browser.runtime.sendMessage(msg) as Promise<T>;
+const DEMO = new URLSearchParams(location.search).get('demo');
+
+const send = <T = void>(msg: Message) =>
+  (DEMO === null ? browser.runtime.sendMessage(msg) : Promise.resolve([])) as Promise<T>;
 
 async function hasOffscreen() {
   const contexts = await browser.runtime.getContexts({
@@ -191,7 +194,44 @@ function empty() {
   return box;
 }
 
+// One entry per row variant, so every state is on screen at once. No favIconUrl: the letter
+// avatar renders instead and the popup still makes no network requests.
+const DEMO_ROWS: [Partial<Tab>, TabState | undefined, boolean][] = [
+  [
+    { id: 1, title: 'Weekly standup — Google Meet', url: 'https://meet.google.com/abc-defg-hij', windowId: 1 },
+    { tabId: 1, volume: 0.85, preset: 'clear', muted: false, locked: true },
+    true, // locked, this tab
+  ],
+  [
+    { id: 2, title: 'lofi hip hop radio — beats to relax to', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', windowId: 1 },
+    { tabId: 2, volume: 0.3, preset: 'background', muted: false, locked: true },
+    false, // locked, another tab
+  ],
+  [
+    { id: 3, title: 'Design review', url: 'https://app.zoom.us/wc/123456789/join', windowId: 1 },
+    { tabId: 3, volume: 0.6, preset: 'muffled', muted: true, locked: true },
+    false, // locked and muted
+  ],
+  [
+    { id: 4, title: 'Discord', url: 'https://discord.com/channels/@me', windowId: 1 },
+    { tabId: 4, volume: 0.45, preset: 'radio', muted: false, locked: false },
+    true, // released, settings kept
+  ],
+  [
+    { id: 5, title: 'Spotify — Web Player', url: 'https://open.spotify.com/', windowId: 1, mutedInfo: { muted: false } },
+    undefined,
+    false, // never controlled: remote, lock disabled
+  ],
+];
+
 async function render() {
+  if (DEMO !== null) {
+    const rows = DEMO === 'empty' ? [empty()] : DEMO_ROWS.map(([t, s, active]) => row(t as Tab, s, active));
+    list.replaceChildren(...rows);
+    count.textContent = `${DEMO === 'empty' ? 0 : DEMO_ROWS.length} tabs`;
+    return;
+  }
+
   const [active] = await browser.tabs.query({ active: true, currentWindow: true });
   const states = (await hasOffscreen()) ? await send<TabState[]>({ type: 'list' }) : [];
   const attached = new Map(states.map((s) => [s.tabId, s]));
@@ -204,6 +244,7 @@ async function render() {
 }
 
 async function init() {
+  if (DEMO !== null) return render();
   // Opening the popup on an audible tab takes control of it, no button needed.
   const [active] = await browser.tabs.query({ active: true, currentWindow: true });
   if (active?.id !== undefined && active.audible) {

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
     <title>Siren Audio Mixer</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
@@ -16,10 +16,9 @@
     <main id="main">
       <p id="error" hidden></p>
       <div class="list" id="tabs"></div>
-      <p class="note">Tabs playing audio are added automatically</p>
     </main>
 
-    <section id="about" class="about" hidden>
+    <section id="about" class="list about" hidden>
       <h2>About</h2>
       <p>
         Siren Audio Mixer lets you set the volume and a sound preset for each tab separately. Run two calls, or a call
@@ -62,6 +61,7 @@
     </section>
 
     <footer>
+      <p class="note">Tabs playing audio are added automatically</p>
       <span class="cl">©</span> 2026 Rainoutside · <button class="link" id="aboutBtn">About</button>
     </footer>
     <script type="module" src="./main.ts"></script>
